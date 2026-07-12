@@ -1,0 +1,29 @@
+# 依存パッケージ（pnpm install で復元できるので保存しない）
+node_modules/
+
+# ビルド成果物
+dist/
+dist-ssr/
+build/
+
+# ログ
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# エディタ・OS が作る一時ファイル
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.local
+
+# 環境変数（パスワードやAPIキーを書くファイル。絶対に公開しない）
+.env
+.env.*
+!.env.example
+
+# Vite キャッシュ
+.vite/
