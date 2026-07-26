@@ -1,84 +1,26 @@
-# Wedding Quiz - カラードレス当て投票サイト
+# wedding-quiz
 
-結婚式用のカラードレス当てクイズサイトです。QRコードを読み取って参加し、全問正解者にはプレゼントが当たります。
+結婚式用のカラードレス当てクイズサイトです。
 
-## 機能
+アプリの本体は [`wedding_quiz/`](./wedding_quiz) にあります。機能の詳細・カスタマイズ方法は
+[`wedding_quiz/README.md`](./wedding_quiz/README.md) を参照してください。
 
-### 1. 投票機能
-- **Q1: カラードレスの色当て** - 新婦のカラードレスの色を予想
-- **Q2: 2人の思い出の曲** - カップルの思い出の曲を当てる
-- **Q3: 2人の思い出の場所** - カップルの思い出の場所を当てる
+## クイックスタート
 
-### 2. 結果発表
-- 各問題の投票率をリアルタイム表示
-- カウントダウン後に正解発表
-- 正解/不正解のフィードバック
-
-### 3. ランキング
-- 全問正解者を回答時間順にランキング表示
-- 1位〜3位にはメダル表示
-- プレゼント獲得のお知らせ
-
-### 4. QRコード
-- `/qr` ページでQRコードを表示
-- 結婚式会場でスクリーンに表示可能
-
-## 技術スタック
-
-- **フロントエンド**: React + TypeScript
-- **スタイリング**: Tailwind CSS
-- **アニメーション**: Framer Motion
-- **QRコード**: qrcode.react
-- **ルーティング**: React Router
-- **ビルドツール**: Vite
-
-## 使い方
-
-### 開発サーバーの起動
-\`\`\`bash
+```bash
 cd wedding_quiz
 pnpm install
 pnpm dev
-\`\`\`
+```
 
-### ビルド
-\`\`\`bash
-pnpm build
-\`\`\`
+## リポジトリ構成
 
-## カスタマイズ
-
-### 問題と正解の変更
-`src/data/quizData.ts` を編集して、問題の内容と正解を変更できます。
-
-\`\`\`typescript
-export const quizQuestions: QuizQuestion[] = [
-  {
-    id: 1,
-    title: "カラードレスの色当て",
-    subtitle: "新婦のカラードレスは何色でしょう？",
-    options: [
-      { id: "pink", label: "ピンク", color: "#FFB6C1" },
-      // 他の選択肢...
-    ],
-    correctAnswer: "pink", // 正解のIDを設定
-  },
-  // 他の問題...
-];
-\`\`\`
-
-## ページ構成
-
-- `/` - メインのクイズページ
-- `/qr` - QRコード表示ページ（結婚式会場のスクリーン用）
-
-## デザイン
-
-- スタイリッシュなダークテーマ
-- グラスモーフィズムのカードデザイン
-- ゴールドとパープルのアクセントカラー
-- スムーズなアニメーション効果
-
-## ライセンス
-
-MIT License
+```
+wedding_quiz/
+├── src/
+│   ├── components/   # 各画面（Welcome / Quiz / Countdown / Reveal / Results / Ranking / QRCode）
+│   ├── context/      # QuizContext（回答状態の管理）
+│   ├── data/         # quizData.ts（問題と正解の定義）
+│   └── App.tsx       # ルーティング
+└── package.json
+```
