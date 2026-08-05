@@ -1,0 +1,15 @@
+{
+  "name": "サンプル1: 都内中古区分ワンルーム",
+  "ptype": "区分",
+  "location": "東京都板橋区 / 駅徒歩7分",
+  "price": 1980,
+  "monthly_rent": 8.2,
+  "structure": "RC",
+  "built_year": 1998,
+  "annual_fixed_cost": 32,
+  "vacancy_rate": 0.05,
+  "ltv": 0.9,
+  "loan_rate": 0.021,
+  "loan_years": 30,
+  "notes": "業者売主。管理費1.1万/月+修繕積立金0.9万/月+固都税を annual_fixed_cost に含む。現況賃貸中(オーナーチェンジ)。"
+}

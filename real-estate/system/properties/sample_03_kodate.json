@@ -1,0 +1,16 @@
+{
+  "name": "サンプル3: 地方戸建て再生(現金買い)",
+  "ptype": "戸建",
+  "location": "群馬県高崎市 / 駐車場2台",
+  "price": 380,
+  "monthly_rent": 5.5,
+  "structure": "木造",
+  "built_year": 1989,
+  "annual_fixed_cost": 8,
+  "vacancy_rate": 0.15,
+  "building_ratio": 0.3,
+  "ltv": 0.0,
+  "loan_rate": 0.0,
+  "loan_years": 1,
+  "notes": "リフォーム済価格。現況空室、想定賃料は周辺募集事例ベース。現金購入想定(ltv=0)。"
+}
