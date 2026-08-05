@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI導入 削減インパクト試算書ジェネレーター</title>
+<style>
+  :root{--navy:#1b3a5c;--gold:#c9a227;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;color:#22303c;background:#eef2f6;line-height:1.7;}
+  .app{max-width:1100px;margin:0 auto;padding:24px;display:grid;grid-template-columns:340px 1fr;gap:24px;}
+  .panel{background:#fff;border-radius:10px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+  h1{font-size:18px;color:var(--navy);margin-bottom:14px;}
+  label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px;}
+  input,select{width:100%;padding:9px 10px;border:1px solid #c9d4de;border-radius:6px;font-size:15px;}
+  button{width:100%;margin-top:18px;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;}
+  button:hover{filter:brightness(1.15);}
+  /* 試算書（印刷対象） */
+  #sheet{background:#fff;border-radius:10px;padding:36px 42px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+  #sheet h2{color:var(--navy);font-size:22px;border-bottom:3px solid var(--gold);padding-bottom:8px;margin-bottom:6px;}
+  #sheet .sub{font-size:13px;color:#667;margin-bottom:22px;}
+  .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0;}
+  .kpi div{background:#f4f7fa;border-radius:8px;padding:16px;text-align:center;}
+  .kpi b{display:block;font-size:26px;color:var(--navy);}
+  .kpi span{font-size:12px;color:#556;}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;}
+  th,td{border:1px solid #dbe3ea;padding:9px 12px;text-align:left;}
+  th{background:#f0f4f8;color:var(--navy);}
+  td.r{text-align:right;font-variant-numeric:tabular-nums;}
+  .note{font-size:11px;color:#778;margin-top:16px;}
+  .roi{background:#fdf6e3;border:1px solid var(--gold);border-radius:8px;padding:14px 18px;margin-top:14px;font-size:15px;}
+  @media print{
+    body{background:#fff;}
+    .app{display:block;max-width:none;padding:0;}
+    .panel:first-child,button{display:none!important;}
+    #sheet{box-shadow:none;border-radius:0;padding:10mm 14mm;}
+  }
+  @media(max-width:800px){.app{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="panel">
+    <h1>入力（商談中にその場で）</h1>
+    <label>医院名</label><input id="clinic" placeholder="やまだ内科クリニック" value="">
+    <label>事務スタッフ数（人）</label><input id="staff" type="number" value="3" min="1">
+    <label>1人あたり事務作業（時間/週）</label><input id="hours" type="number" value="15" min="1">
+    <label>平均時給（円）※社保込み目安1,800</label><input id="wage" type="number" value="1800" min="800" step="100">
+    <label>削減見込み</label>
+    <select id="rate">
+      <option value="0.2">控えめ（20%）</option>
+      <option value="0.3" selected>標準（30%）</option>
+      <option value="0.4">積極（40%）</option>
+    </select>
+    <label>導入費用の想定（円）</label><input id="cost" type="number" value="1500000" step="100000">
+    <button onclick="calc()">試算書を更新</button>
+    <button onclick="window.print()" style="background:var(--gold);color:#1c1c1c;">印刷 / PDF保存</button>
+  </div>
+
+  <div id="sheet">
+    <h2>AI導入 削減インパクト試算書</h2>
+    <div class="sub">作成: ［会社名］（現役医師によるAI導入支援）｜<span id="date"></span>｜宛先: <span id="o_clinic">—</span> 御中</div>
+
+    <div class="kpi">
+      <div><b id="o_hours">—</b><span>削減時間（月）</span></div>
+      <div><b id="o_yen">—</b><span>削減額（年・人件費換算）</span></div>
+      <div><b id="o_payback">—</b><span>投資回収期間</span></div>
+    </div>
+
+    <table>
+      <tr><th>項目</th><th>現状</th><th>AI導入後</th></tr>
+      <tr><td>事務作業合計（週）</td><td class="r" id="c_now">—</td><td class="r" id="c_after">—</td></tr>
+      <tr><td>月間の事務時間</td><td class="r" id="m_now">—</td><td class="r" id="m_after">—</td></tr>
+      <tr><td>年間人件費（事務分）</td><td class="r" id="y_now">—</td><td class="r" id="y_after">—</td></tr>
+    </table>
+
+    <div class="roi" id="o_roi">—</div>
+
+    <table>
+      <tr><th>削減の内訳（代表例）</th><th>方法</th></tr>
+      <tr><td>文書作成（紹介状下書き・お知らせ・掲示物）</td><td>AIによる下書き自動生成＋スタッフ確認</td></tr>
+      <tr><td>定型の問い合わせ対応</td><td>LINE/HPの自動応答に移管</td></tr>
+      <tr><td>SNS・ブログ更新</td><td>週次自動生成＋チェックのみ</td></tr>
+    </table>
+
+    <p class="note">※本試算はヒアリング値に基づく概算です。確定値は「AI活用診断」（60分）で業務を棚卸しのうえ提示します。人件費換算は時給×削減時間で算出。個人情報・診療情報をAIに入力しない設計を原則とします。</p>
+  </div>
+</div>
+
+<script>
+function yen(n){return (Math.round(n/10000)).toLocaleString()+"万円";}
+function calc(){
+  const staff=+document.getElementById('staff').value||0;
+  const hours=+document.getElementById('hours').value||0;
+  const wage=+document.getElementById('wage').value||0;
+  const rate=+document.getElementById('rate').value;
+  const cost=+document.getElementById('cost').value||0;
+  const clinic=document.getElementById('clinic').value||"—";
+  const weekNow=staff*hours;
+  const weekAfter=weekNow*(1-rate);
+  const monthSaved=weekNow*rate*4.33;
+  const yearNowYen=weekNow*52*wage;
+  const yearSavedYen=weekNow*rate*52*wage;
+  const payback=yearSavedYen>0?(cost/(yearSavedYen/12)):0;
+  document.getElementById('o_clinic').textContent=clinic;
+  document.getElementById('o_hours').textContent=Math.round(monthSaved)+"時間";
+  document.getElementById('o_yen').textContent="約"+yen(yearSavedYen);
+  document.getElementById('o_payback').textContent=payback?("約"+Math.ceil(payback)+"ヶ月"):"—";
+  document.getElementById('c_now').textContent=weekNow.toFixed(0)+" h";
+  document.getElementById('c_after').textContent=weekAfter.toFixed(0)+" h";
+  document.getElementById('m_now').textContent=Math.round(weekNow*4.33)+" h";
+  document.getElementById('m_after').textContent=Math.round(weekAfter*4.33)+" h";
+  document.getElementById('y_now').textContent="約"+yen(yearNowYen);
+  document.getElementById('y_after').textContent="約"+yen(yearNowYen-yearSavedYen);
+  document.getElementById('o_roi').innerHTML="<b>導入費 "+yen(cost)+"</b> は、削減額ベースで <b>約"+Math.ceil(payback)+"ヶ月</b> で回収。以降は毎年 約"+yen(yearSavedYen)+" が面接・患者対応・採用に使える時間として戻ります。";
+}
+document.getElementById('date').textContent=new Date().toLocaleDateString('ja-JP');
+calc();
+</script>
+</body>
+</html>
